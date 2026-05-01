@@ -83,7 +83,10 @@ def install_repo(
             dry_run=dry_run,
         )
 
-    run([*pip, "install", "-e", "extensions/diffusers_diffsplat"], cwd=repo_dir, dry_run=dry_run)
+    # --no-build-isolation reuses already-installed packages instead of creating an
+    # isolated build env. Required on Python 3.12 where distutils was removed and
+    # many setup.py-based packages break inside an isolated build.
+    run([*pip, "install", "--no-build-isolation", "-e", "extensions/diffusers_diffsplat"], cwd=repo_dir, dry_run=dry_run)
     if shutil.which("ffmpeg") is None:
         print("ffmpeg was not found on PATH. GIF output usually works, but mp4 export may need a system ffmpeg install.")
 
